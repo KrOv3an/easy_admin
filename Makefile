@@ -14,5 +14,5 @@ refresh_database:
 .PHONY: refresh_database
 
 git_push:
-	git add . && git commit -m$(commit) && git push origin
+	git add . && git commit -m'$(commit)' && git push origin
 .PHONY: git_push
