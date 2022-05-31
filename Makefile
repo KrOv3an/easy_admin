@@ -16,3 +16,16 @@ refresh_database:
 git_push:
 	git add . && git commit -m'$(commit)' && git push origin
 .PHONY: git_push
+
+start:
+	symfony server:start -d
+	symfony run -d yarn watch
+.PHONY: start
+
+stop:
+	symfony server:stop
+.PHONY: stop
+
+watch:
+	symfony run -d yarn watch
+.PHONY: watch
