@@ -101,3 +101,15 @@ And as always, thanks so much for your support and letting
 us do what we love!
 
 <3 Your friends at SymfonyCasts
+
+### docker full refresh:
+`docker-compose stop`
+
+`docker-compose rm`
+
+`docker volume prune`
+
+`docker-compose up -d --force-recreate`
+
+### run deploy:
+`git add . && git commit -m'test' && git push origin && symfony cloud:deploy`
