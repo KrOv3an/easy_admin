@@ -2,12 +2,12 @@
 
 namespace App\Controller\Admin;
 
+use App\EasyAdmin\VotesField;
 use App\Entity\Answer;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 
 class AnswerCrudController extends AbstractCrudController
 {
@@ -27,7 +27,7 @@ class AnswerCrudController extends AbstractCrudController
     {
         yield IdField::new('id');
         yield Field::new('answer');
-        yield IntegerField::new('votes');
+        yield VotesField::new('votes');
         yield AssociationField::new('question')
             ->autocomplete()
             ->hideOnIndex();
