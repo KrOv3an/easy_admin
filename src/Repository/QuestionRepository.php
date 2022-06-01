@@ -20,6 +20,9 @@ class QuestionRepository extends ServiceEntityRepository
         parent::__construct($registry, Question::class);
     }
 
+    /**
+     * @return Question[]
+     */
     public function findLatest(): array
     {
         return $this->createQueryBuilder('question')
