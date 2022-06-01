@@ -21,21 +21,34 @@ class Topic
     #[ORM\OneToMany('topic', Question::class)]
     private Collection $questions;
 
+    /**
+     *
+     */
     public function __construct()
     {
         $this->questions = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     * @return $this
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -44,13 +57,17 @@ class Topic
     }
 
     /**
-     * @return Collection|Question[]
+     * @return Collection
      */
     public function getQuestions(): Collection
     {
         return $this->questions;
     }
 
+    /**
+     * @param Question $question
+     * @return $this
+     */
     public function addQuestion(Question $question): self
     {
         if (!$this->questions->contains($question)) {
@@ -61,6 +78,10 @@ class Topic
         return $this;
     }
 
+    /**
+     * @param Question $question
+     * @return $this
+     */
     public function removeQuestion(Question $question): self
     {
         if ($this->questions->removeElement($question)) {
@@ -71,5 +92,13 @@ class Topic
         }
 
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function __toString()
+    {
+        return $this->getName();
     }
 }
