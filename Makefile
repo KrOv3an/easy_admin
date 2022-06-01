@@ -18,6 +18,7 @@ git_push:
 .PHONY: git_push
 
 start:
+	docker-compose up -d
 	symfony server:start -d
 	symfony run -d yarn watch
 .PHONY: start

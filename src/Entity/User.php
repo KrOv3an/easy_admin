@@ -208,7 +208,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             return null;
         }
 
-        if (strpos($this->avatar, '/') !== false) {
+        if (str_contains($this->avatar, '/')) {
             return $this->avatar;
         }
 
@@ -221,7 +221,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Question[]
+     * @return Collection
      */
     public function getQuestions(): Collection
     {
@@ -251,7 +251,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Answer[]
+     * @return Collection
      */
     public function getAnswers(): Collection
     {
