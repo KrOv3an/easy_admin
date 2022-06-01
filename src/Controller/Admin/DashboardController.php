@@ -22,6 +22,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class DashboardController extends AbstractDashboardController
 {
+    /**
+     * @return Response
+     */
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin', name: 'admin')]
     public function index(): Response
@@ -81,11 +84,25 @@ class DashboardController extends AbstractDashboardController
             ->add(Crud::PAGE_INDEX, Action::DETAIL);
     }
 
+    /**
+     * @return Assets
+     */
     public function configureAssets(): Assets
     {
         return parent::configureAssets()
             ->addWebpackEncoreEntry('admin');
     }
 
-
+    /**
+     * @return Crud
+     */
+    public function configureCrud(): Crud
+    {
+        return parent::configureCrud()
+            ->setDefaultSort(
+                [
+                    'id' => 'DESC',
+                ]
+            );
+    }
 }

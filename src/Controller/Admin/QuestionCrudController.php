@@ -11,8 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class QuestionCrudController extends AbstractCrudController
 {
@@ -24,6 +22,10 @@ class QuestionCrudController extends AbstractCrudController
         return Question::class;
     }
 
+    /**
+     * @param string $pageName
+     * @return iterable
+     */
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')
@@ -31,10 +33,23 @@ class QuestionCrudController extends AbstractCrudController
         yield Field::new('slug')
             ->hideOnIndex()
             ->setFormTypeOption('disabled', $pageName !== Crud::PAGE_NEW);
-        yield Field::new('name');
+        yield Field::new('name')
+            ->setSortable(false);
         yield AssociationField::new('topic');
         yield TextareaField::new('question')
-            ->hideOnIndex();
+            ->hideOnIndex()
+            ->setFormTypeOptions(
+                [
+                    'row_attr' => [
+                        'data-controller' => 'snarkdown',
+                    ],
+                    'attr' => [
+                        'data-snarkdown-target' => 'input',
+                        'data-action' => 'snarkdown#render',
+                    ],
+                ]
+            )
+            ->setHelp('Preview:');
         yield VotesField::new('votes');
         yield AssociationField::new('askedBy')
             ->autocomplete()
@@ -55,5 +70,20 @@ class QuestionCrudController extends AbstractCrudController
             ->setFormTypeOption('by_reference', false);
         yield Field::new('createdAt')
             ->hideOnForm();
+    }
+
+    /**
+     * @param Crud $crud
+     * @return Crud
+     */
+    public function configureCrud(Crud $crud): Crud
+    {
+        return parent::configureCrud($crud)
+            ->setDefaultSort(
+                [
+                    'askedBy.enabled' => 'DESC',
+                    'createdAt' => 'DESC',
+                ]
+            );
     }
 }

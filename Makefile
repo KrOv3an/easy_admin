@@ -30,3 +30,7 @@ stop:
 watch:
 	symfony run -d yarn watch
 .PHONY: watch
+
+log:
+	symfony server:log
+.PHONY: log
