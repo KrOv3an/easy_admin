@@ -27,25 +27,26 @@ class DashboardController extends AbstractDashboardController
 {
     /**
      * @param QuestionRepository $questionRepository
-     * @param ChartBuilderInterface $chartBuilder
      */
     public function __construct(
         private readonly QuestionRepository $questionRepository,
-        private readonly ChartBuilderInterface $chartBuilder
     ) {
     }
 
     /**
+     * @param ChartBuilderInterface|null $chartBuilder
      * @return Response
      */
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin', name: 'admin')]
-    public function index(): Response
+    public function index(ChartBuilderInterface $chartBuilder = null): Response
     {
+        assert(null !== $chartBuilder);
+
         $latestQuestions = $this->questionRepository->findLatest();
         $topVoted = $this->questionRepository->findTopVoted();
         return $this->render('admin/index.html.twig', [
-            'latestQuestions' => $latestQuestions, 'topVoted' => $topVoted, 'chart' => $this->createChart()
+            'latestQuestions' => $latestQuestions, 'topVoted' => $topVoted, 'chart' => $this->createChart($chartBuilder)
         ]);
     }
 
@@ -124,11 +125,12 @@ class DashboardController extends AbstractDashboardController
     }
 
     /**
+     * @param ChartBuilderInterface $chartBuilder
      * @return Chart
      */
-    private function createChart(): Chart
+    private function createChart(ChartBuilderInterface $chartBuilder): Chart
     {
-        $chart = $this->chartBuilder->createChart(Chart::TYPE_LINE);
+        $chart = $chartBuilder->createChart(Chart::TYPE_LINE);
         $chart->setData(
             [
                 'labels' => ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
