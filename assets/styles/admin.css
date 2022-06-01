@@ -1,7 +1,11 @@
-:root {
-    --sidebar-bg: '#deebff';
-}
+/*:root {*/
+/*    --sidebar-bg: '#deebff';*/
+/*}*/
 
 .main-content {
     margin-bottom: 100px;
+}
+
+input:disabled {
+    background-color: lightgray!important;
 }
