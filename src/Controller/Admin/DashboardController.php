@@ -121,7 +121,8 @@ class DashboardController extends AbstractDashboardController
                 [
                     'id' => 'DESC',
                 ]
-            );
+            )
+            ->overrideTemplate('crud/field/id', 'admin/crud/field/id_with_icon.html.twig');
     }
 
     /**

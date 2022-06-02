@@ -21,7 +21,7 @@ class VotesField implements FieldInterface
             ->setProperty($propertyName)
             ->setLabel($label)
             //this template is used in the index and details pages
-            ->setTemplatePath('admin/field/votes.html.twig')
+            ->setTemplatePath('admin/crud/field/votes.html.twig')
             //this template is used in the edit and new pages
             ->setFormType(IntegerType::class)
             ->addCssClass('field-integer')
