@@ -3,7 +3,13 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AvatarField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -35,8 +41,8 @@ class UserCrudController extends AbstractCrudController
         yield IdField::new('id')
             ->onlyOnIndex();
         yield AvatarField::new('avatar')
-            ->formatValue(static function ($value, User $user) {
-                return $user->getAvatarUrl();
+            ->formatValue(static function ($value, ?User $user) {
+                return $user?->getAvatarUrl();
             })
             ->hideOnForm();
         yield ImageField::new('avatar')
@@ -63,4 +69,45 @@ class UserCrudController extends AbstractCrudController
             ->renderExpanded()
             ->renderAsBadges();
     }
+
+    /**
+     * @param Crud $crud
+     * @return Crud
+     */
+    public function configureCrud(Crud $crud): Crud
+    {
+        return parent::configureCrud($crud)
+            ->setEntityPermission('ADMIN_USER_EDIT');
+    }
+
+    /**
+     * @param SearchDto $searchDto
+     * @param EntityDto $entityDto
+     * @param FieldCollection $fields
+     * @param FilterCollection $filters
+     * @return QueryBuilder
+     */
+    public function createIndexQueryBuilder(
+        SearchDto $searchDto,
+        EntityDto $entityDto,
+        FieldCollection $fields,
+        FilterCollection $filters
+    ): QueryBuilder {
+        $qb = parent::createIndexQueryBuilder(
+            $searchDto,
+            $entityDto,
+            $fields,
+            $filters
+        );
+
+        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+            return $qb;
+
+        }
+
+        return $qb->andWhere('entity.id = :id')
+            ->setParameter('id', $this->getUser()->getId());
+    }
+
+
 }

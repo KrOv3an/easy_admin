@@ -55,8 +55,13 @@ class DashboardController extends AbstractDashboardController
      */
     public function configureDashboard(): Dashboard
     {
-        return Dashboard::new()
+        $dashboard = Dashboard::new()
             ->setTitle('Cauldron Overflow Admin');
+
+        $dashboard->getAsDto()->setContentWidth(Crud::LAYOUT_CONTENT_DEFAULT);
+        $dashboard->getAsDto()->setSidebarWidth(Crud::LAYOUT_SIDEBAR_COMPACT);
+
+        return $dashboard;
     }
 
     /**
@@ -74,11 +79,11 @@ class DashboardController extends AbstractDashboardController
             ->setAvatarUrl($user->getAvatarUrl())
             ->setMenuItems(
                 [
-                    MenuItem::linkToUrl('My Profile', 'fa fa-user', $this->generateUrl('app_profile_show'))
+                    MenuItem::linkToUrl('My Profile', 'fa fa-user', $this->generateUrl('app_profile_show')),
+                    MenuItem::linkToUrl('Sign Out', 'fa fa-fw fa-sign-out', $this->generateUrl('app_logout')),
                 ]
             );
     }
-
 
     /**
      * @return iterable
@@ -87,7 +92,8 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToUrl('Homepage', 'fa fa-home', $this->generateUrl('app_homepage'));
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-dashboard');
-        yield MenuItem::linkToCrud('Questions', 'fa fa-question-circle', Question::class);
+        yield MenuItem::linkToCrud('Questions', 'fa fa-question-circle', Question::class)
+        ->setPermission('ROLE_MODERATOR');
         yield MenuItem::linkToCrud('Answers', 'fa fa-comments', Answer::class);
         yield MenuItem::linkToCrud('Topics', 'fa fa-folder', Topic::class);
         yield MenuItem::linkToCrud('Users', 'fa fa-users', User::class);
