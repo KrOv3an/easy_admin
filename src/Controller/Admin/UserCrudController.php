@@ -7,6 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
@@ -20,6 +21,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class UserCrudController extends AbstractCrudController
@@ -102,12 +104,19 @@ class UserCrudController extends AbstractCrudController
 
         if ($this->isGranted('ROLE_SUPER_ADMIN')) {
             return $qb;
-
         }
 
         return $qb->andWhere('entity.id = :id')
             ->setParameter('id', $this->getUser()->getId());
     }
 
-
+    /**
+     * @param Filters $filters
+     * @return Filters
+     */
+    public function configureFilters(Filters $filters): Filters
+    {
+        return parent::configureFilters($filters)
+            ->add(BooleanFilter::new('enabled')->setFormTypeOption('expanded', false));
+    }
 }
