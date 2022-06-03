@@ -46,7 +46,9 @@ class DashboardController extends AbstractDashboardController
         $latestQuestions = $this->questionRepository->findLatest();
         $topVoted = $this->questionRepository->findTopVoted();
         return $this->render('admin/index.html.twig', [
-            'latestQuestions' => $latestQuestions, 'topVoted' => $topVoted, 'chart' => $this->createChart($chartBuilder)
+            'latestQuestions' => $latestQuestions,
+            'topVoted' => $topVoted,
+            'chart' => $this->createChart($chartBuilder)
         ]);
     }
 
@@ -92,8 +94,17 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToUrl('Homepage', 'fa fa-home', $this->generateUrl('app_homepage'));
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-dashboard');
-        yield MenuItem::linkToCrud('Questions', 'fa fa-question-circle', Question::class)
-        ->setPermission('ROLE_MODERATOR');
+        yield MenuItem::subMenu('Questions', 'fa fa-question-circle')
+            ->setSubItems(
+                [
+                    MenuItem::linkToCrud('All', 'fa fa-list', Question::class)
+                        ->setController(QuestionCrudController::class)
+                        ->setPermission('ROLE_MODERATOR'),
+                    MenuItem::linkToCrud('Pending Approval', 'fa fa-warning', Question::class)
+                        ->setPermission('ROLE_MODERATOR')
+                        ->setController(QuestionPendingApprovalCrudController::class),
+                ]
+            );
         yield MenuItem::linkToCrud('Answers', 'fa fa-comments', Answer::class);
         yield MenuItem::linkToCrud('Topics', 'fa fa-folder', Topic::class);
         yield MenuItem::linkToCrud('Users', 'fa fa-users', User::class);
