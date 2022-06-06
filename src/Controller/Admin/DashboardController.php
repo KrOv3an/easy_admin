@@ -94,6 +94,7 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToUrl('Homepage', 'fa fa-home', $this->generateUrl('app_homepage'));
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-dashboard');
+        yield MenuItem::section('Content');
         yield MenuItem::subMenu('Questions', 'fa fa-question-circle')
             ->setSubItems(
                 [
@@ -108,6 +109,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Answers', 'fa fa-comments', Answer::class);
         yield MenuItem::linkToCrud('Topics', 'fa fa-folder', Topic::class);
         yield MenuItem::linkToCrud('Users', 'fa fa-users', User::class);
+        yield MenuItem::section();
+        yield MenuItem::linkToUrl('StackOverflow', 'fab fa-stack-overflow', 'https://stackoverflow.com/')
+            ->setBadge('Danger', 'warning')
+        ->setLinkTarget('blanc');
     }
 
     /**

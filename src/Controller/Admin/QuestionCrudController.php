@@ -4,6 +4,8 @@ namespace App\Controller\Admin;
 
 use App\EasyAdmin\VotesField;
 use App\Entity\Question;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -14,6 +16,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use Exception;
+use LogicException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 #[IsGranted('ROLE_MODERATOR')]
@@ -76,6 +80,8 @@ class QuestionCrudController extends AbstractCrudController
             ->setFormTypeOption('by_reference', false);
         yield Field::new('createdAt')
             ->hideOnForm();
+        yield AssociationField::new('updatedBy')
+            ->onlyOnDetail();
     }
 
     /**
@@ -100,6 +106,14 @@ class QuestionCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return parent::configureActions($actions)
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
+                $action->displayIf(static function(Question $question) {
+                    return true;
+//                    return !$question->getIsApproved();
+                });
+
+                return $action;
+            })
             ->setPermission(Action::INDEX, 'ROLE_MODERATOR')
             ->setPermission(Action::DETAIL, 'ROLE_MODERATOR')
             ->setPermission(Action::EDIT, 'ROLE_MODERATOR')
@@ -119,5 +133,37 @@ class QuestionCrudController extends AbstractCrudController
             ->add('createdAt')
             ->add('votes')
             ->add('name');
+    }
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param $entityInstance
+     * @return void
+     */
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            throw new LogicException('Currently logged in User is not instance of User');
+        }
+
+        $entityInstance->setUpdatedBy($user);
+
+        parent::updateEntity($entityManager, $entityInstance);
+    }
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param Question $entityInstance
+     * @return void
+     * @throws Exception
+     */
+    public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance->getIsApproved()) {
+            throw new Exception('Deleting approved questions is forbidden');
+        }
+
+        parent::deleteEntity($entityManager, $entityInstance);
     }
 }
