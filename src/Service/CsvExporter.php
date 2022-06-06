@@ -12,8 +12,17 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CsvExporter
 {
-    public function createResponseFromQueryBuilder(QueryBuilder $queryBuilder, FieldCollection $fields, string $filename): Response
-    {
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param FieldCollection $fields
+     * @param string $filename
+     * @return Response
+     */
+    public function createResponseFromQueryBuilder(
+        QueryBuilder $queryBuilder,
+        FieldCollection $fields,
+        string $filename
+    ): Response {
         $result = $queryBuilder->getQuery()->getArrayResult();
 
         // Convert DateTime objects into strings
