@@ -18,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -59,11 +60,16 @@ class QuestionCrudController extends AbstractCrudController
     {
         yield IdField::new('id')
             ->onlyOnIndex();
+
+        yield FormField::addTab('Basic Data');
+
+        yield Field::new('name')
+            ->setSortable(false)
+            ->setColumns(5);
         yield Field::new('slug')
+            ->setColumns(5)
             ->hideOnIndex()
             ->setFormTypeOption('disabled', $pageName !== Crud::PAGE_NEW);
-        yield Field::new('name')
-            ->setSortable(false);
         yield AssociationField::new('topic');
         yield TextareaField::new('question')
             ->hideOnIndex()
@@ -81,6 +87,11 @@ class QuestionCrudController extends AbstractCrudController
             ->setHelp('Preview:');
         yield VotesField::new('votes')
             ->setPermission('ROLE_SUPER_ADMIN');
+
+        yield FormField::addTab('Details')
+            ->setIcon('info')
+            ->setHelp('Additional details');
+
         yield AssociationField::new('askedBy')
             ->autocomplete()
             ->formatValue(static function ($value, Question $question) {
